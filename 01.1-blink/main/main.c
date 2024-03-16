@@ -17,14 +17,14 @@
  * 
  * @param s The string to print
 */
-void print_string(const char *const s) {
+static void print_string(const char *const s) {
     printf("%8u: %s\n", xTaskGetTickCount(), s);
 }
 
 /**
  * @brief Configure GPIO pin settings.
 */
-void configure_gpio(void) {
+static void configure_gpio(void) {
     gpio_config_t io_config;
     io_config.pin_bit_mask = LED_MASK;
     io_config.mode = GPIO_MODE_OUTPUT;
@@ -37,7 +37,7 @@ void configure_gpio(void) {
 /**
  * @brief Task: Toggle LED state and print a message.
 */
-void vTaskToggleLed(void *pvParameters) {
+static void vTaskToggleLed(void *pvParameters) {
     bool led_state = 0;
     TickType_t pxPreviousWakeTime = xTaskGetTickCount();
     const TickType_t xTimeIncrement = pdMS_TO_TICKS(BLINK_PERIOD / 2);

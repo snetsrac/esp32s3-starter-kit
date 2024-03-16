@@ -11,6 +11,7 @@
 #define LED GPIO_NUM_2
 #define LED_MASK (1ULL << LED)
 #define BLINK_PERIOD 1000UL
+#define BLINK_DELAY pdMS_TO_TICKS(BLINK_PERIOD / 2)
 
 /**
  * @brief Print a string to the console, along with the current tick count.
@@ -40,13 +41,12 @@ static void configure_gpio(void) {
 static void vTaskToggleLed(void *pvParameters) {
     bool led_state = 0;
     TickType_t pxPreviousWakeTime = xTaskGetTickCount();
-    const TickType_t xTimeIncrement = pdMS_TO_TICKS(BLINK_PERIOD / 2);
 
     for (;;) {
         led_state = !led_state;
         print_string(led_state ? "Turning LED on." : "Turning LED off.");
         gpio_set_level(LED, led_state);
-        xTaskDelayUntil(&pxPreviousWakeTime, xTimeIncrement);
+        xTaskDelayUntil(&pxPreviousWakeTime, BLINK_DELAY);
     }
 }
 

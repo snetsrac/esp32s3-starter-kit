@@ -20,6 +20,7 @@
 */
 static void print_string(const char *const s) {
     printf("%8u: %s\n", xTaskGetTickCount(), s);
+    fflush(stdout);
 }
 
 /**

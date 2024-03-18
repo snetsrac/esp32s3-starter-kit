@@ -21,7 +21,7 @@
 /**
  * @brief Print a string to the console, along with the current tick count.
  * 
- * @param s The string to print
+ * @param s the string to print
 */
 static void print_string(const char *const s) {
     printf("%8u: %s\n", xTaskGetTickCount(), s);
@@ -42,7 +42,7 @@ static void configure_gpio(void) {
 }
 
 /**
- * @brief Configure the PWM timer
+ * @brief Configure the PWM timer.
 */
 static void configure_pwm_timer(void) {
     ledc_timer_config_t timer_config = {
@@ -56,7 +56,7 @@ static void configure_pwm_timer(void) {
 }
 
 /**
- * @brief Configure the PWM channel
+ * @brief Configure the PWM channel.
 */
 static void configure_pwm_channel(void) {
     ledc_channel_config_t channel_config = {
@@ -71,9 +71,9 @@ static void configure_pwm_channel(void) {
 }
 
 /**
- * @brief Update the PWM duty cycle
+ * @brief Update the PWM duty cycle.
  * 
- * @param duty Duty cycle, [0, DUTY_MAX)
+ * @param duty duty cycle, [0, DUTY_MAX)
 */
 static void change_pwm_duty(const uint32_t duty) {
     assert(duty < DUTY_MAX);
@@ -86,12 +86,14 @@ static void change_pwm_duty(const uint32_t duty) {
  * @brief Calculate duty cycle using a polynomial to account for
  *        non-linearity of the human eye.
  * 
- * @param x Duty cycle, [0, DUTY_MAX)
+ * @param n duty cycle, [0, DUTY_MAX)
+ * @returns duty cycle, [0, DUTY_MAX)
 */
 static uint32_t calculate_duty(const int n) {
     assert(n >= 0);
     assert(n < DUTY_MAX);
 
+    // Scale to [0,1), apply polynomial, rescale to [0, DUTY_MAX)
     float x = (float)n / (float)DUTY_MAX;
     x = powf(x, 3.0);
     x = x * DUTY_MAX;
@@ -110,12 +112,15 @@ static void vTaskPulseLed(void *pvParameters) {
     for (;;) {
         print_string("Start pulse.");
 
+        // Increasing brightness
+        // Uses 32 as minimum to limit the amount of time the LED is off
         for (int i = 32; i < DUTY_MAX; i++) {
             duty = calculate_duty(i);
             change_pwm_duty(duty);
             vTaskDelayUntil(&xPreviousWakeTime, DUTY_DELAY);
         }
 
+        // Decreasing brightness
         for (int i = DUTY_MAX - 1; i >= 32; i--) {
             duty = calculate_duty(i);
             change_pwm_duty(duty);

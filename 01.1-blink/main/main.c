@@ -16,7 +16,7 @@
 /**
  * @brief Print a string to the console, along with the current tick count.
  * 
- * @param s The string to print
+ * @param s the string to print
 */
 static void print_string(const char *const s) {
     printf("%8u: %s\n", xTaskGetTickCount(), s);

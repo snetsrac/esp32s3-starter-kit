@@ -35,7 +35,7 @@ static const int NUM_LEDS = sizeof(LED_PINS);
 /**
  * @brief Print a string to the console, along with the current tick count.
  * 
- * @param s The string to print
+ * @param s the string to print
 */
 static void print_string(const char *const s) {
     printf("%8u: %s\n", xTaskGetTickCount(), s);
@@ -64,12 +64,14 @@ static void vTaskSequenceLed(void *pvParameters) {
     for (;;) {
         print_string("Start sequence.");
 
+        // Ascending sequence
         for (int i = 0; i < NUM_LEDS - 1; i++) {
             gpio_set_level(LED_PINS[i], 1);
             vTaskDelayUntil(&xPreviousWakeTime, SEQUENCE_DELAY);
             gpio_set_level(LED_PINS[i], 0);
         }
 
+        // Descending sequence
         for (int i = NUM_LEDS - 1; i > 0; i--) {
             gpio_set_level(LED_PINS[i], 1);
             vTaskDelayUntil(&xPreviousWakeTime, SEQUENCE_DELAY);

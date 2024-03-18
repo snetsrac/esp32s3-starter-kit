@@ -40,14 +40,14 @@ static void configure_gpio(void) {
  * @brief Task: Toggle LED state and print a message.
 */
 static void vTaskToggleLed(void *pvParameters) {
-    bool led_state = 0;
-    TickType_t pxPreviousWakeTime = xTaskGetTickCount();
+    bool led_state = false;
+    TickType_t xPreviousWakeTime = xTaskGetTickCount();
 
     for (;;) {
         led_state = !led_state;
         print_string(led_state ? "Turning LED on." : "Turning LED off.");
         gpio_set_level(LED, led_state);
-        xTaskDelayUntil(&pxPreviousWakeTime, BLINK_DELAY);
+        xTaskDelayUntil(&xPreviousWakeTime, BLINK_DELAY);
     }
 }
 
